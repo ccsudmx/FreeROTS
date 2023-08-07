@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "app_fifo.h": "c",
+        "bsp_uart.h": "c",
+        "freertos.h": "c",
+        "usart2.h": "c",
+        "uart4.h": "c",
+        "wifi.h": "c",
+        "stm32f10x.h": "c"
+    }
+}
