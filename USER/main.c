@@ -15,7 +15,7 @@
 #include "wifi.h"
 #include "app_fifo.h"
 #include "lora.h"
-
+#include "my_json.h"
 
 //wifi句柄以及任务
 TaskHandle_t Wifi_Handler;
@@ -29,12 +29,18 @@ void sendRfidCmd_task(void *pvParameters);
 //读取Rfid卡
 TaskHandle_t Rfid_Handler;
 void Rfid_task(void *pvParameters);
-
+ Json Fan=
+{
+	.name="FAN1",
+	.status=0,
+	.value=0,
+	.len=4
+};
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 	delay_init();	    				
-    Uart_Init();
+    Usart1_Init();
     xTaskCreate((TaskFunction_t )Wifi_task,             
                (const char*    )"Wifi_task",           
                (uint16_t       )2056,        
@@ -60,7 +66,6 @@ void Wifi_task(void *pvParameters)
     uint8_t Uart4_Read_Buff[UART4_RX_SIZE];
     xSemaphore_4 = xSemaphoreCreateCounting( 1, 0 );
     Uart4_Init(); 
-    printf("1");    
     Connect_MQTT();
     xTaskCreate((TaskFunction_t )Lora_task,             
                (const char*    )"Lora_task",           
@@ -78,26 +83,26 @@ void Wifi_task(void *pvParameters)
        memset(Uart4_Read_Buff,0,UART4_RX_SIZE);    
        Fifo_Get(&Uart4_Rx_Fifo,Uart4_Read_Buff,UART4_RX_SIZE);
         if(strstr((const char *)Uart4_Read_Buff, (const char *)"+MQTTSUBRECV:0") != NULL){
-            printf("%s\n",Uart4_Read_Buff);
-            printf("hello,world");
+            printf("RX=%s\r\n",(char *)Uart4_Read_Buff);
+            Usart2_Send(Uart4_Read_Buff,UART4_RX_SIZE);
+            MQTT_JSON((char *)Uart4_Read_Buff,&Fan);
+          
         }
-        else 
-        {
-            Uart_1_Send((uint8_t *)"error!",6);
-        }
+     
    
     }
 
 
 }
 
+extern FIFO_Type Usart2_Rx_Fifo;
 void Lora_task(void *pvParameters)
 {
     
-   printf("2");
    xSemaphore_2=xSemaphoreCreateCounting( 1, 0 );
    Usart2_Init();
    LoRa_Init();
+   u8 Usart2_RX[100];
     
   xTaskCreate((TaskFunction_t )Rfid_task,             
                (const char*    )"Rfid_task",           
@@ -118,7 +123,11 @@ void Lora_task(void *pvParameters)
     { 
         
          xSemaphoreTake(xSemaphore_2, portMAX_DELAY);
-         Uart_1_Send((uint8_t *)"loraRE!",6);
+        Fifo_Get(&Usart2_Rx_Fifo,Usart2_RX,USART2_RX_SIZE);
+          vTaskDelay(100);
+         printf("%s",Usart2_RX);
+        memset(Usart2_RX,0,100);
+         
         
     }
 

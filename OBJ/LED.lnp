@@ -4,9 +4,7 @@
 "..\obj\system_stm32f10x.o"
 "..\obj\app_fifo.o"
 "..\obj\bsp_uart.o"
-"..\obj\led.o"
 "..\obj\timer.o"
-"..\obj\lcd.o"
 "..\obj\uart4.o"
 "..\obj\usart2.o"
 "..\obj\usart3.o"
@@ -34,6 +32,7 @@
 "..\obj\rfid.o"
 "..\obj\wifi.o"
 "..\obj\lora.o"
+"..\obj\my_json.o"
 --ro-base 0x08000000 --entry 0x08000000 --rw-base 0x20000000 --entry Reset_Handler --first __Vectors --strict --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "..\OBJ\LED.map" -o ..\OBJ\LED.axf

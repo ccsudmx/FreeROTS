@@ -24,7 +24,6 @@ _LoRa_CFG LoRa_CFG=
 };
 u8 LoRa_Init(void)
 {
-    printf("300");
 	 uint8_t Receive_Buff[USART2_RX_SIZE];
 	 GPIO_InitTypeDef  GPIO_InitStructure;
 		

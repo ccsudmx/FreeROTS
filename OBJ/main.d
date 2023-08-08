@@ -54,3 +54,4 @@
 ..\obj\main.o: ..\Peripheral\WiFI\wifi.h
 ..\obj\main.o: app_fifo.h
 ..\obj\main.o: ..\Peripheral\Lora\lora.h
+..\obj\main.o: my_json.h

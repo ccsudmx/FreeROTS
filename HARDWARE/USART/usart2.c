@@ -118,7 +118,7 @@ void Usart2_Send(const uint8_t* buf, uint16_t len)
 extern SemaphoreHandle_t xSemaphore_2;
 void USART2_IRQHandler(void)
 {
-	uint32_t temp = 0;
+	volatile uint32_t temp = 0;
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	if(USART_GetITStatus(USART2,USART_IT_IDLE)!= RESET)//ø’œ–÷–∂œ
 	{

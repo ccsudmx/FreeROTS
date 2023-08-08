@@ -14,7 +14,7 @@ static SemaphoreHandle_t Uart1TxWaitSem;
 
 
 
-void Uart_1_Init(void)
+void Usart1_Init(void)
 {
 //GPIO端口设置
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -99,7 +99,7 @@ void Uart_1_Init(void)
 }
 
 
-void Uart_1_Send(const uint8_t* buf, uint16_t len)
+void Usart1_Send(const uint8_t* buf, uint16_t len)
 {
 	if(len > BSP_UART1_TX_SIZE || len == 0)
 	{
@@ -121,92 +121,13 @@ void Uart_1_Send(const uint8_t* buf, uint16_t len)
 
 
 
-uint16_t Uart_1_Select(uint16_t delay)
-{
-	uint16_t count = 0;
-	uint16_t len = 0;
-//	CPU_SR_ALLOC();
-	
-	while(count < delay)
-	{
-		delay_ms(10);
-		count+=10;
-		portDISABLE_INTERRUPTS();
-		Uart1_Rx_Fifo.in = BSP_UART1_RX_SIZE - DMA_GetCurrDataCounter(DMA1_Channel5);
-		portENABLE_INTERRUPTS();
-		len = Fifo_Status(&Uart1_Rx_Fifo);
-		if(len != 0)
-			return len;
-	}
-	return len;
-}
 
-uint16_t Uart_1_Get(uint8_t *buffer, uint16_t len)
-{
-	return Fifo_Get(&Uart1_Rx_Fifo,buffer, len);
-}
-
-void Uart_1_Clean(void)
-{
-	DMA_Cmd(DMA1_Channel5, DISABLE);
-	Uart1_Rx_Fifo.in = 0;
-	Uart1_Rx_Fifo.out = 0;
-	DMA_SetCurrDataCounter(DMA1_Channel5, 0);
-	DMA_Cmd(DMA1_Channel5, ENABLE);
-}
-
-void Uart_Init(void)
-{
-	Uart_1_Init( );
-
-}
-
-
-void Uart_Send(USART_TypeDef* uart, const uint8_t* buffer, uint16_t len)
-{
-	if(uart == USART1)
-	{
-		Uart_1_Send( buffer, len);
-	}
-
-}
-
-uint16_t Uart_Get(USART_TypeDef* uart, uint8_t *buffer, uint16_t len)
-{
-	uint16_t lenght = 0;
-	if(uart == USART1)
-	{
-		lenght = Uart_1_Get( buffer, len);
-	}
-	
-	return lenght;
-}
-
-uint16_t Uart_Select(USART_TypeDef* uart, uint16_t delay)
-{
-	uint16_t lenght = 0;
-	if(uart == USART1)
-	{
-		lenght = Uart_1_Select( delay);
-	}
-	
-	return lenght;	
-}
-
-void Uart_Clean(USART_TypeDef* uart)
-{
-	if(uart == USART1)
-	{
-		Uart_1_Clean();
-	}
-
-}
 
 extern SemaphoreHandle_t xSemaphore;
 //中断
 void USART1_IRQHandler(void)
 {
-	uint32_t temp = 0;
+	volatile uint32_t temp = 0;
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	if(USART_GetITStatus(USART1,USART_IT_IDLE)!= RESET)//空闲中断
 	{

@@ -99,7 +99,7 @@ void Uart4_Send(const uint8_t* buf, uint16_t len)
 	}
   //  printf("send=%s,%d",buf,DMA_GetCurrDataCounter(DMA2_Channel3));
 
-	//xSemaphoreTake(Uart4TxSem, 500);
+	xSemaphoreTake(Uart4TxSem, 500);
 
 	DMA_Cmd(DMA2_Channel5, DISABLE);
 
@@ -108,13 +108,13 @@ void Uart4_Send(const uint8_t* buf, uint16_t len)
 	DMA2_Channel5->CMAR = (uint32_t)buf;//DMA_InitStructure->DMA_MemoryBaseAddr;
 	/* Enable UART4 DMA TX request */
 	DMA_Cmd (DMA2_Channel5,ENABLE);
-	//xSemaphoreTake(Uart4TxWaitSem, 500);
-	//xSemaphoreGive (Uart4TxSem);
+	xSemaphoreTake(Uart4TxWaitSem, 500);
+	xSemaphoreGive (Uart4TxSem);
 }
 extern  SemaphoreHandle_t  xSemaphore_4;
 void UART4_IRQHandler(void)
 {
-	uint32_t temp = 0;
+	volatile uint32_t temp = 0;
     uint32_t ulReturn;
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
    ulReturn=taskENTER_CRITICAL_FROM_ISR();
