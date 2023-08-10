@@ -7,19 +7,20 @@
 #include "app_fifo.h"
 #include "FreeRTOS.h"
 #include "semphr.h"
-
+#include "task.h"
+#include "delay.h"
 extern FIFO_Type Uart4_Rx_Fifo;
 uint8_t Uart4_Rx_Buff[AT_RX_LEN];
 uint8_t MQTTSendErrorTimes=0;
 void Send_AtCmd(uint8_t *string,uint8_t len)
 {   
     uint8_t Send[AT_RX_LEN] ;   
-    sprintf((char *)Send,"%s\r\n",string);
-    
+    sprintf((char *)Send,"%s\r\n",string);  
     Uart4_Send(Send,len+2);
  
 }
 extern xSemaphoreHandle xSemaphore_4;
+extern xSemaphoreHandle xSemaphore_5;
 
 uint8_t ESP8266_SetStation(void)
 {
@@ -110,6 +111,7 @@ int8_t ESP8266_MQTT_SUB(char *topic)
 	return 0;
 
 }
+extern SemaphoreHandle_t xMutex;
 int8_t ESP8266_MQTT_Pub(char *IpBuf, uint8_t len, uint8_t qos)
 {
 	uint8_t IpSend[AT_TX_LEN];
@@ -119,10 +121,16 @@ int8_t ESP8266_MQTT_Pub(char *IpBuf, uint8_t len, uint8_t qos)
 	sprintf((char *)IpSend,"AT+MQTTPUBRAW=0,\"M3\",%d,%d,0", len, qos);
     
 	//1.发送命令 2.等待消息收到 3.等待消息通过DMA传输到Uart4_Rx_Buff缓冲区
+     //  taskENTER_CRITICAL(); 
+    xSemaphoreTake(xMutex, portMAX_DELAY);
+    
 	Send_AtCmd((uint8_t *)IpSend,strlen((const char *)IpSend));
-    xSemaphoreTake(xSemaphore_4, portMAX_DELAY);
-      delay_ms(100);
-   Fifo_Get(&Uart4_Rx_Fifo,Uart4_Rx_Buff,AT_RX_LEN);
+    xSemaphoreTake(xSemaphore_5, portMAX_DELAY);
+     delay_ms(100);
+    Fifo_Get(&Uart4_Rx_Fifo,Uart4_Rx_Buff,AT_RX_LEN);
+    
+    xSemaphoreGive(xMutex);
+    
 	if(strstr((const char *)Uart4_Rx_Buff, (const char *)"OK") == NULL)
 	{
 		printf("MQTT_Pub Fail:%s\r\n", Uart4_Rx_Buff);
@@ -133,11 +141,14 @@ int8_t ESP8266_MQTT_Pub(char *IpBuf, uint8_t len, uint8_t qos)
 	 memset(Uart4_Rx_Buff,0,AT_RX_LEN);
 	
 	//以二进制数据形式发送字符串
+    //taskENTER_CRITICAL(); 
+    xSemaphoreTake(xMutex, portMAX_DELAY);
 	 Send_AtCmd((uint8_t *)IpBuf, len);
-     xSemaphoreTake(xSemaphore_4, portMAX_DELAY);
+     xSemaphoreTake(xSemaphore_5, portMAX_DELAY);
       delay_ms(100);
+      
       Fifo_Get(&Uart4_Rx_Fifo,Uart4_Rx_Buff,AT_RX_LEN);
-	
+	xSemaphoreGive(xMutex);
 	if(strstr((const char *)Uart4_Rx_Buff, (const char *)"OK") == NULL)
 	{
 		MQTTSendErrorTimes++;

@@ -6,7 +6,6 @@
 #include "task.h"
  FIFO_Type Uart4_Rx_Fifo;
 uint8_t Uart4_Rx_Buffer1[UART4_RX_SIZE];
-static SemaphoreHandle_t Uart4TxSem;
 static SemaphoreHandle_t Uart4TxWaitSem;
 void Uart4_Init(void)
 {
@@ -86,8 +85,6 @@ void Uart4_Init(void)
 	//接收FIFO初�?�化
 	Fifo_Init(&Uart4_Rx_Fifo,Uart4_Rx_Buffer1,UART4_RX_SIZE);
 
-	//发送信号量初�?�化
-	Uart4TxSem = xSemaphoreCreateCounting(1,1); 
 	Uart4TxWaitSem = xSemaphoreCreateCounting(1,0); 
 
 }
@@ -97,10 +94,8 @@ void Uart4_Send(const uint8_t* buf, uint16_t len)
 	{
 		return;
 	}
-  //  printf("send=%s,%d",buf,DMA_GetCurrDataCounter(DMA2_Channel3));
-
-	xSemaphoreTake(Uart4TxSem, 500);
-
+   
+ 
 	DMA_Cmd(DMA2_Channel5, DISABLE);
 
 	DMA2_Channel5->CNDTR = len;//DMA_InitStructure->DMA_BufferSize; 不能�?为零
@@ -108,10 +103,13 @@ void Uart4_Send(const uint8_t* buf, uint16_t len)
 	DMA2_Channel5->CMAR = (uint32_t)buf;//DMA_InitStructure->DMA_MemoryBaseAddr;
 	/* Enable UART4 DMA TX request */
 	DMA_Cmd (DMA2_Channel5,ENABLE);
+    
 	xSemaphoreTake(Uart4TxWaitSem, 500);
-	xSemaphoreGive (Uart4TxSem);
+	//xSemaphoreGive (Uart4TxSem);
 }
 extern  SemaphoreHandle_t  xSemaphore_4;
+
+extern  SemaphoreHandle_t  xSemaphore_5;
 void UART4_IRQHandler(void)
 {
 	volatile uint32_t temp = 0;
@@ -126,6 +124,8 @@ void UART4_IRQHandler(void)
        // printf("Count is %d",DMA_GetCurrDataCounter(DMA2_Channel3));
 		if(xSemaphore_4 != NULL)
 			xSemaphoreGiveFromISR(xSemaphore_4,&xHigherPriorityTaskWoken);
+        if(xSemaphore_5 != NULL)
+			xSemaphoreGiveFromISR(xSemaphore_5,&xHigherPriorityTaskWoken);
       // portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 		temp = UART4->SR; //�?件序列清�?IDLE�?
 		temp = UART4->DR; //先�?�USART_SR,然后读USART_DR
