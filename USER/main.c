@@ -56,7 +56,7 @@ int main(void)
                (const char*    )"Wifi_task",           
                (uint16_t       )2056,        
                (void*          )NULL,                  
-               (UBaseType_t    )3,        
+               (UBaseType_t    )4,        
                (TaskHandle_t*  )&Wifi_Handler); 
   
     vTaskStartScheduler();   
@@ -93,7 +93,7 @@ void Wifi_task(void *pvParameters)
        memset(Uart4_Read_Buff,0,UART4_RX_SIZE);
        xSemaphoreTake(xMutex, portMAX_DELAY);        
        Fifo_Get(&Uart4_Rx_Fifo,Uart4_Read_Buff,UART4_RX_SIZE);
-        xSemaphoreGive(xMutex);
+       
         if(strstr((const char *)Uart4_Read_Buff, (const char *)"+MQTTSUBRECV:0") != NULL){
             printf("RX=%s\r\n",(char *)Uart4_Read_Buff);
             Usart2_Send(Uart4_Read_Buff,UART4_RX_SIZE);
@@ -101,6 +101,7 @@ void Wifi_task(void *pvParameters)
             
           
         }
+       xSemaphoreGive(xMutex);
      
    
     }
@@ -121,7 +122,7 @@ void Lora_task(void *pvParameters)
                (const char*    )"Rfid_task",           
                (uint16_t       )1024,        
                (void*          )NULL,                  
-               (UBaseType_t    )3,        
+               (UBaseType_t    )4,        
                (TaskHandle_t*  )&Rfid_Handler);
                
   xTaskCreate((TaskFunction_t )sendRfidCmd_task,             
