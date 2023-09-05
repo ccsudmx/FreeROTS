@@ -1,5 +1,5 @@
 Dependencies for Project 'FreeRTOS', Target 'FreeRTOS': (DO NOT MODIFY !)
-F (.\main.c)(0x64D6401C)(--c99 -c --cpu Cortex-M3 -g -O2 --apcs=interwork --split_sections -I..\USER -I..\CORE -I..\STM32F10x_FWLib\inc -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM3 -I..\HARDWARE\LED -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\USART -I..\Peripheral\RFID -I..\Peripheral\WiFI -I..\Peripheral\Lora -I..\USER-I C:\Users\17464\Desktop\ROTS-Zet6\USER\RTE-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0-I E:\keil_ARM\ARM\CMSIS\Include-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
+F (.\main.c)(0x64F714F3)(--c99 -c --cpu Cortex-M3 -g -O2 --apcs=interwork --split_sections -I..\USER -I..\CORE -I..\STM32F10x_FWLib\inc -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM3 -I..\HARDWARE\LED -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\USART -I..\Peripheral\RFID -I..\Peripheral\WiFI -I..\Peripheral\Lora -I..\USER-I C:\Users\17464\Desktop\ROTS-Zet6\USER\RTE-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0-I E:\keil_ARM\ARM\CMSIS\Include-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
 I (..\SYSTEM\sys\sys.h)(0x583BA68A)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
@@ -50,10 +50,10 @@ I (E:\keil_ARM\ARM\ARMCC\include\string.h)(0x5475F300)
 I (..\HARDWARE\USART\usart2.h)(0x64CF0CAF)
 I (..\HARDWARE\USART\usart3.h)(0x64C9C9F3)
 I (..\HARDWARE\USART\uart4.h)(0x64CBB0E4)
-I (..\Peripheral\RFID\rfid.h)(0x64C907B7)
-I (..\Peripheral\WiFI\wifi.h)(0x64D3474B)
+I (..\Peripheral\RFID\rfid.h)(0x64F6B7DD)
+I (..\Peripheral\WiFI\wifi.h)(0x64F6C066)
 I (app_fifo.h)(0x64CF0F08)
-I (..\Peripheral\Lora\lora.h)(0x64CF4722)
+I (..\Peripheral\Lora\lora.h)(0x64DCB224)
 I (my_json.h)(0x64D2507B)
 I (..\FreeRTOS\include\timers.h)(0x573F3A16)
 F (.\stm32f10x_it.c)(0x583BA648)(--c99 -c --cpu Cortex-M3 -g -O2 --apcs=interwork --split_sections -I..\USER -I..\CORE -I..\STM32F10x_FWLib\inc -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM3 -I..\HARDWARE\LED -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\USART -I..\Peripheral\RFID -I..\Peripheral\WiFI -I..\Peripheral\Lora -I..\USER-I C:\Users\17464\Desktop\ROTS-Zet6\USER\RTE-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0-I E:\keil_ARM\ARM\CMSIS\Include-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\stm32f10x_it.o --omf_browse ..\obj\stm32f10x_it.crf --depend ..\obj\stm32f10x_it.d)
@@ -1062,7 +1062,7 @@ I (..\FreeRTOS\include\mpu_wrappers.h)(0x573F3A16)
 I (..\FreeRTOS\include\task.h)(0x573F3A16)
 I (..\FreeRTOS\include\list.h)(0x573F3A16)
 F (..\README.TXT)(0x64D25CC8)()
-F (..\Peripheral\RFID\rfid.c)(0x64CF89E9)(--c99 -c --cpu Cortex-M3 -g -O2 --apcs=interwork --split_sections -I..\USER -I..\CORE -I..\STM32F10x_FWLib\inc -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM3 -I..\HARDWARE\LED -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\USART -I..\Peripheral\RFID -I..\Peripheral\WiFI -I..\Peripheral\Lora -I..\USER-I C:\Users\17464\Desktop\ROTS-Zet6\USER\RTE-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0-I E:\keil_ARM\ARM\CMSIS\Include-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\rfid.o --omf_browse ..\obj\rfid.crf --depend ..\obj\rfid.d)
+F (..\Peripheral\RFID\rfid.c)(0x64F6B864)(--c99 -c --cpu Cortex-M3 -g -O2 --apcs=interwork --split_sections -I..\USER -I..\CORE -I..\STM32F10x_FWLib\inc -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM3 -I..\HARDWARE\LED -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\USART -I..\Peripheral\RFID -I..\Peripheral\WiFI -I..\Peripheral\Lora -I..\USER-I C:\Users\17464\Desktop\ROTS-Zet6\USER\RTE-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0-I E:\keil_ARM\ARM\CMSIS\Include-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\rfid.o --omf_browse ..\obj\rfid.crf --depend ..\obj\rfid.d)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
 I (E:\keil_ARM\ARM\ARMCC\include\stdint.h)(0x5475F300)
@@ -1095,7 +1095,7 @@ I (..\HARDWARE\USART\usart3.h)(0x64C9C9F3)
 I (..\SYSTEM\usart\usart.h)(0x50517A82)
 I (E:\keil_ARM\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\SYSTEM\sys\sys.h)(0x583BA68A)
-I (..\Peripheral\RFID\rfid.h)(0x64C907B7)
+I (..\Peripheral\RFID\rfid.h)(0x64F6B7DD)
 I (..\USER\app_fifo.h)(0x64CF0F08)
 I (..\FreeRTOS\include\FreeRTOS.h)(0x573F3A16)
 I (E:\keil_ARM\ARM\ARMCC\include\stddef.h)(0x5475F300)
@@ -1110,7 +1110,7 @@ I (..\FreeRTOS\include\queue.h)(0x573F3A16)
 I (..\FreeRTOS\include\task.h)(0x573F3A16)
 I (..\FreeRTOS\include\list.h)(0x573F3A16)
 F (..\Peripheral\WiFI\wifi.c)(0x64D64066)(--c99 -c --cpu Cortex-M3 -g -O2 --apcs=interwork --split_sections -I..\USER -I..\CORE -I..\STM32F10x_FWLib\inc -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM3 -I..\HARDWARE\LED -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\USART -I..\Peripheral\RFID -I..\Peripheral\WiFI -I..\Peripheral\Lora -I..\USER-I C:\Users\17464\Desktop\ROTS-Zet6\USER\RTE-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0-I E:\keil_ARM\ARM\CMSIS\Include-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\wifi.o --omf_browse ..\obj\wifi.crf --depend ..\obj\wifi.d)
-I (..\Peripheral\WiFI\wifi.h)(0x64D3474B)
+I (..\Peripheral\WiFI\wifi.h)(0x64F6C066)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
 I (E:\keil_ARM\ARM\ARMCC\include\stdint.h)(0x5475F300)
@@ -1158,7 +1158,7 @@ I (..\FreeRTOS\include\semphr.h)(0x573F3A16)
 I (..\FreeRTOS\include\queue.h)(0x573F3A16)
 I (..\FreeRTOS\include\task.h)(0x573F3A16)
 I (..\FreeRTOS\include\list.h)(0x573F3A16)
-F (..\Peripheral\Lora\lora.c)(0x64D2304B)(--c99 -c --cpu Cortex-M3 -g -O2 --apcs=interwork --split_sections -I..\USER -I..\CORE -I..\STM32F10x_FWLib\inc -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM3 -I..\HARDWARE\LED -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\USART -I..\Peripheral\RFID -I..\Peripheral\WiFI -I..\Peripheral\Lora -I..\USER-I C:\Users\17464\Desktop\ROTS-Zet6\USER\RTE-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0-I E:\keil_ARM\ARM\CMSIS\Include-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\lora.o --omf_browse ..\obj\lora.crf --depend ..\obj\lora.d)
+F (..\Peripheral\Lora\lora.c)(0x64DCB224)(--c99 -c --cpu Cortex-M3 -g -O2 --apcs=interwork --split_sections -I..\USER -I..\CORE -I..\STM32F10x_FWLib\inc -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM3 -I..\HARDWARE\LED -I..\HARDWARE\TIMER -I..\HARDWARE\LCD -I..\HARDWARE\USART -I..\Peripheral\RFID -I..\Peripheral\WiFI -I..\Peripheral\Lora -I..\USER-I C:\Users\17464\Desktop\ROTS-Zet6\USER\RTE-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0-I E:\keil_ARM\ARM\CMSIS\Include-I E:\keil_ARM\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\lora.o --omf_browse ..\obj\lora.crf --depend ..\obj\lora.d)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
 I (E:\keil_ARM\ARM\ARMCC\include\stdint.h)(0x5475F300)
@@ -1187,7 +1187,7 @@ I (..\STM32F10x_FWLib\inc\stm32f10x_tim.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\stm32f10x_usart.h)(0x504F415E)
 I (..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\misc.h)(0x4D783BB4)
-I (..\Peripheral\Lora\lora.h)(0x64CF4722)
+I (..\Peripheral\Lora\lora.h)(0x64DCB224)
 I (..\SYSTEM\sys\sys.h)(0x583BA68A)
 I (E:\keil_ARM\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\SYSTEM\delay\delay.h)(0x583BAA09)

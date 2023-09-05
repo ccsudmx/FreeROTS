@@ -16,7 +16,7 @@ typedef struct
    u8 parity;//校验位
 }_LoRa_CFG;
 #define LORA_AUX  PAin(4)    //LORA模块状态引脚
-#define LORA_MD0  PAout(15)  //LORA模块控制引脚
+#define LORA_MD0  PAout(1)  //LORA模块控制引脚
 
 //空中速率(单位:Kbps)
 #define  LORA_RATE_0K3  0 //0.3

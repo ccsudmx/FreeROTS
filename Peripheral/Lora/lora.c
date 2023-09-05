@@ -32,7 +32,7 @@ u8 LoRa_Init(void)
 
      GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);//��ֹJTAG,�Ӷ�PA15��������ͨIOʹ��,����PA15��������ͨIO!!!	
 	
-	 GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;	    		 //LORA_MD0
+	 GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;	    		 //LORA_MD0
 	 GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 		 //�������
 	 GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		 //IO���ٶ�Ϊ50MHz
 	 GPIO_Init(GPIOA, &GPIO_InitStructure);	  				 //������� ��IO���ٶ�Ϊ50MHz

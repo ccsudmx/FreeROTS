@@ -84,7 +84,7 @@ void RFID_CMD()
 	Usart3_Send(Cmd_Read_Id,Cmd_Read_Id[1]);		 //发送读卡号ID命令
 
 }
-unsigned char ReadId(void)
+unsigned char ReadId(char  * Id_num)
 {
 
 	unsigned char i;
@@ -103,10 +103,18 @@ unsigned char ReadId(void)
                 if(Uart3RxBuf[i+5]%16<10)
                   printf("%c ",Uart3RxBuf[i+5]%16+48);
                 else  printf("%c ",Uart3RxBuf[i+5]%16+55);
-               // printf("\n");
+             
+                
+                   if(Uart3RxBuf[i+5]/16<10)Id_num[i]=Uart3RxBuf[i+5]/16+48;
+                   else  Id_num[i]=Uart3RxBuf[i+5]/16+55;
+                   if(Uart3RxBuf[i+5]%16<10)Id_num[i]=Uart3RxBuf[i+5]%16+48;
+                   else Id_num[i]=Uart3RxBuf[i+5]%16+55;
+//               
+//                else  printf("%c",Uart3RxBuf[i+5]/16+55); 
                                                 
 			 }
              printf("\n");
+             Id_num[6]='\0';
             return STATUS_OK;	
 // 	if(Rx3Flag == 0)
 // 	{	
@@ -304,6 +312,6 @@ void RFID_task(void)
    // Write_RFID(0x01,data,5);
    // Read_RFID(0x01,5);
     
-    ReadId();
+  //  ReadId();
 
 }
