@@ -46,6 +46,7 @@ SemaphoreHandle_t xSemaphore_3;
 SemaphoreHandle_t  xSemaphore_4;
 SemaphoreHandle_t  xSemaphore_5;
  char Send_id[40];
+ int send_volume=0;
 // Json Fan=
 //{
 //	.name="FAN1",
@@ -59,20 +60,20 @@ int main(void)
 	delay_init();	    				
     Usart1_Init();
     xMutex = xSemaphoreCreateMutex( );
+
     xTaskCreate((TaskFunction_t )Wifi_task,             
                (const char*    )"Wifi_task",           
                (uint16_t       )2056,        
                (void*          )NULL,                  
                (UBaseType_t    )4,        
                (TaskHandle_t*  )&Wifi_Handler); 
-               
-//    xTaskCreate((TaskFunction_t )Key_task,             
-//               (const char*    )"Key_task",           
-//               (uint16_t       )1024,        
-//               (void*          )NULL,                  
-//               (UBaseType_t    )3,        
-//               (TaskHandle_t*  )&Key_Handler); 
-               
+
+       xTaskCreate((TaskFunction_t )Key_task,             
+               (const char*    )"Key_task",           
+               (uint16_t       )512,        
+               (void*          )NULL,                  
+               (UBaseType_t    )3,        
+               (TaskHandle_t*  )&Key_Handler);             
    xTaskCreate((TaskFunction_t )HC05_task,             
                (const char*    )"HC05_task",           
                (uint16_t       )1024,        
@@ -132,10 +133,12 @@ void Wifi_task(void *pvParameters)
 }
 
 extern FIFO_Type Usart2_Rx_Fifo;
+
 void Lora_task(void *pvParameters)
 {
   uint8_t Usart2_RX[100];
   uint8_t Send_msg[150];
+  printf("enter  lora");
    // char *buff;
    xSemaphore_2=xSemaphoreCreateCounting( 1, 0 );
    Usart2_Init();
@@ -143,7 +146,7 @@ void Lora_task(void *pvParameters)
                
   xTaskCreate((TaskFunction_t )Rfid_task,             
                (const char*    )"Rfid_task",           
-               (uint16_t       )1024,        
+               (uint16_t       )512,        
                (void*          )NULL,                  
                (UBaseType_t    )4,        
                (TaskHandle_t*  )&Rfid_Handler);
@@ -165,7 +168,7 @@ void Lora_task(void *pvParameters)
            //    Usart2_RX[strlen((char *)Usart2_RX)-1]=0;
 
 
-        sprintf((char *)Send_msg,"%s,%s}",(char *)Usart2_RX,Send_id);
+        sprintf((char *)Send_msg,"%s,%s,\"water\"=\"%d\"}",(char *)Usart2_RX,Send_id,send_volume);
         //printf("%s",Send_id);
         // xSemaphoreTake(xMutex, portMAX_DELAY);
          ESP8266_MQTT_Pub((char *)Send_msg,strlen((char *)Send_msg),1);
@@ -201,6 +204,7 @@ void sendRfidCmd_task(void *pvParameters)
 {
     
 
+               
 
   while(1)
   {
@@ -212,34 +216,42 @@ void sendRfidCmd_task(void *pvParameters)
 
 
 }
+
 void Key_task(void *pvParameters)
-{
+{    
+    
+    uint8_t flag_stop=0;
+    uint8_t flag_key=0;
+    int volume=0;
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE); // GPIOA时钟
     GPIO_InitTypeDef GPIO_InitStructure;
                         
-   
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;      //PD2
+    //row1--PD5
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;      
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;	//复用推挽输出
-    GPIO_Init(GPIOD, &GPIO_InitStructure);          
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;	//推挽输出
+    GPIO_Init(GPIOD, &GPIO_InitStructure);  
     
+    //PD6--led灯
+     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6; 
+     GPIO_Init(GPIOD, &GPIO_InitStructure);    
+    
+    //上拉
     GPIO_InitStructure.GPIO_Mode =  GPIO_Mode_IPU;
-   //s1
+   //C1  PD3
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3; 
 	GPIO_Init(GPIOD, &GPIO_InitStructure); 	
-   //s2
+   //C2  PD4
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4; 
 	GPIO_Init(GPIOD, &GPIO_InitStructure); 
     
-    GPIO_InitStructure.GPIO_Mode =  GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5; 
-	GPIO_Init(GPIOD, &GPIO_InitStructure); 
+ 
     //拉低	
-    GPIO_ResetBits(GPIOD,GPIO_Pin_2);
-    
-    //拉高
-     GPIO_SetBits(GPIOD,GPIO_Pin_5);
-   //  printf("enter key!");
+    GPIO_ResetBits(GPIOD,GPIO_Pin_7);
+    GPIO_ResetBits(GPIOD,GPIO_Pin_6);
+  
+     printf("enter key!");
+      printf("enter key!\n");
     while(1)
     {
     
@@ -251,8 +263,13 @@ void Key_task(void *pvParameters)
           {   
               while(!GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_3));
               
-              //printf("sadsadsd");
-             GPIO_ResetBits(GPIOD,GPIO_Pin_5);
+             flag_stop++;
+              if(flag_key==1)
+              {
+                  flag_stop=0;
+              }
+             flag_key=1;
+             GPIO_SetBits(GPIOD,GPIO_Pin_6);
               
           }
       
@@ -264,12 +281,43 @@ void Key_task(void *pvParameters)
           if(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_4)==0)
           {   
               while(!GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_4));             
-         
-             GPIO_ResetBits(GPIOD,GPIO_Pin_5);
+              flag_stop++;
+              if(flag_key==2)
+              {
+                  flag_stop=0;
+              }
+              flag_key=2;
+             GPIO_ResetBits(GPIOD,GPIO_Pin_6);
               
           }
       
       }
+     if(flag_stop==0)
+     {  
+         if(volume!=0)
+         {
+        send_volume=volume;
+         }
+
+        volume=0;
+        flag_key=0;
+        
+     
+     }
+    if(flag_stop>0)
+     {
+        volume++;
+         if(volume>=6000)
+         {    
+             //关闭灯
+             GPIO_ResetBits(GPIOD,GPIO_Pin_6);
+             send_volume=6000;           
+             flag_stop=0;
+         }
+        else vTaskDelay(100);
+         
+     
+     }
     
     
     }
@@ -279,32 +327,31 @@ void Key_task(void *pvParameters)
 extern ReceiveData UART5_ReceiveData;
 void HC05_task(void *pvParameters)
 {
-
+    char HC05_Buff[40];
     BLT_USART_Config();
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE); // GPIOA时钟
     GPIO_InitTypeDef GPIO_InitStructure;
     
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;      //PD2
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;	//复用推挽输出
-    GPIO_Init(GPIOD, &GPIO_InitStructure); 
-    
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;      //PD2
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;	//复用推挽输出
+//    GPIO_Init(GPIOD, &GPIO_InitStructure); 
+//    
     GPIO_InitStructure.GPIO_Mode=GPIO_Mode_IN_FLOATING;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
     GPIO_Init(GPIOD, &GPIO_InitStructure); 
     
     GPIO_ResetBits(GPIOD,GPIO_Pin_9);
-    GPIO_SetBits(GPIOD,GPIO_Pin_5);
+ 
     printf("\nenter HC05\n");
     while(1)
     {
     
     if(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_9)==1)
     {
-       
-     //  printf("hc05 succsuccl!");
-      // GPIO_ResetBits(GPIOD,GPIO_Pin_5);
-    
+      sprintf(HC05_Buff,"ID=1,V1=2.3,V2=3.4,warning!");
+      printf_blue(HC05_Buff,strlen(HC05_Buff));
+      vTaskDelay(2000);
     
     }
     if(UART5_ReceiveData.receive_data_flag==1)
