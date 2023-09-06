@@ -56,3 +56,4 @@
 ..\obj\main.o: ..\Peripheral\Lora\lora.h
 ..\obj\main.o: my_json.h
 ..\obj\main.o: ..\FreeRTOS\include\timers.h
+..\obj\main.o: ..\Peripheral\HC05\blue.h

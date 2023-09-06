@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM3;..\HARDWARE\LED;..\HARDWARE\TIMER;..\HARDWARE\LCD;..\HARDWARE\USART;..\Peripheral\RFID;..\Peripheral\WiFI;..\Peripheral\Lora;..\USER</IncludePath>
+              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM3;..\HARDWARE\LED;..\HARDWARE\TIMER;..\HARDWARE\LCD;..\HARDWARE\USART;..\Peripheral\RFID;..\Peripheral\WiFI;..\Peripheral\Lora;..\USER;..\Peripheral\HC05</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -637,6 +637,16 @@
               <FileName>my_json.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\my_json.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>HC05</GroupName>
+          <Files>
+            <File>
+              <FileName>blue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Peripheral\HC05\blue.c</FilePath>
             </File>
           </Files>
         </Group>

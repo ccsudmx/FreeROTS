@@ -17,7 +17,7 @@
 #include "lora.h"
 #include "my_json.h"
 #include "timers.h"
-#include "stm32f10x.h"
+#include "blue.h"
 
 //wifi句柄以及任务
 TaskHandle_t Wifi_Handler;
@@ -45,7 +45,7 @@ SemaphoreHandle_t xSemaphore_2;
 SemaphoreHandle_t xSemaphore_3;
 SemaphoreHandle_t  xSemaphore_4;
 SemaphoreHandle_t  xSemaphore_5;
-    char Send_id[40];
+ char Send_id[40];
 // Json Fan=
 //{
 //	.name="FAN1",
@@ -66,18 +66,18 @@ int main(void)
                (UBaseType_t    )4,        
                (TaskHandle_t*  )&Wifi_Handler); 
                
-    xTaskCreate((TaskFunction_t )Key_task,             
-               (const char*    )"Key_task",           
-               (uint16_t       )1024,        
-               (void*          )NULL,                  
-               (UBaseType_t    )3,        
-               (TaskHandle_t*  )&Key_Handler); 
+//    xTaskCreate((TaskFunction_t )Key_task,             
+//               (const char*    )"Key_task",           
+//               (uint16_t       )1024,        
+//               (void*          )NULL,                  
+//               (UBaseType_t    )3,        
+//               (TaskHandle_t*  )&Key_Handler); 
                
    xTaskCreate((TaskFunction_t )HC05_task,             
                (const char*    )"HC05_task",           
                (uint16_t       )1024,        
                (void*          )NULL,                  
-               (UBaseType_t    )4,        
+               (UBaseType_t    )3,        
                (TaskHandle_t*  )&HC05_Handler); 
   
     vTaskStartScheduler();   
@@ -162,7 +162,7 @@ void Lora_task(void *pvParameters)
          xSemaphoreTake(xSemaphore_2, portMAX_DELAY);
           delay_ms(100);
          Fifo_Get(&Usart2_Rx_Fifo,Usart2_RX,USART2_RX_SIZE);
-               Usart2_RX[strlen((char *)Usart2_RX)-1]=0;
+           //    Usart2_RX[strlen((char *)Usart2_RX)-1]=0;
 
 
         sprintf((char *)Send_msg,"%s,%s}",(char *)Usart2_RX,Send_id);
@@ -276,10 +276,48 @@ void Key_task(void *pvParameters)
     
     
 }
+extern ReceiveData UART5_ReceiveData;
 void HC05_task(void *pvParameters)
 {
 
-  
+    BLT_USART_Config();
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE); // GPIOA时钟
+    GPIO_InitTypeDef GPIO_InitStructure;
+    
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;      //PD2
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;	//复用推挽输出
+    GPIO_Init(GPIOD, &GPIO_InitStructure); 
+    
+    GPIO_InitStructure.GPIO_Mode=GPIO_Mode_IN_FLOATING;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+    GPIO_Init(GPIOD, &GPIO_InitStructure); 
+    
+    GPIO_ResetBits(GPIOD,GPIO_Pin_9);
+    GPIO_SetBits(GPIOD,GPIO_Pin_5);
+    printf("\nenter HC05\n");
+    while(1)
+    {
+    
+    if(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_9)==1)
+    {
+       
+     //  printf("hc05 succsuccl!");
+      // GPIO_ResetBits(GPIOD,GPIO_Pin_5);
+    
+    
+    }
+    if(UART5_ReceiveData.receive_data_flag==1)
+    {
+        printf_blue((char *)UART5_ReceiveData.uart_buff,UART5_ReceiveData.datanum);
+        UART5_ReceiveData.receive_data_flag=0;
+        UART5_ReceiveData.datanum=0;
+    
+    }
+    vTaskDelay(20);
+     
+    
+    }
     
 
 }
