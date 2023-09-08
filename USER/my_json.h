@@ -14,4 +14,5 @@
  }Json; 
  
  void MQTT_JSON(char *a,Json * Fan);
+ void Json_mode(char *a,int *c);
 #endif

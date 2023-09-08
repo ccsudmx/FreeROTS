@@ -231,7 +231,7 @@ unsigned char WriteDataToBlock(unsigned char *datain,unsigned char block)
 	return STATUS_ERR;			//失败返回1
 }
 
-unsigned char Read_RFID(unsigned char addr,unsigned char len)
+unsigned char Read_RFID(unsigned char addr,unsigned char len,unsigned char *result)
 {
   unsigned char status;
   unsigned char i;
@@ -259,8 +259,9 @@ unsigned char Read_RFID(unsigned char addr,unsigned char len)
 			
 			for(i=0;i<Cmd_Read_RFID[5];i++)   //将读取的RFID打印到串口
 		{
-			while(USART_GetFlagStatus(USART1,USART_FLAG_TC)==RESET); 
-			USART_SendData(USART1,Uart3RxBuf[i+5]+'0'); 
+//			while(USART_GetFlagStatus(USART1,USART_FLAG_TC)==RESET); 
+//			USART_SendData(USART1,Uart3RxBuf[i+5]+'0'); 
+            result[i]=Uart3RxBuf[i+5];
 		}
 			return STATUS_OK;		 //成功返回0
 		}

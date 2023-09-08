@@ -18,7 +18,8 @@
 #include "my_json.h"
 #include "timers.h"
 #include "blue.h"
-
+#include "stmflash.h"
+#define FLASH_SAVE_ADDR  0X08070000		//设置FLASH 保存地址(必须为偶数，且其值要大于本代码所占用FLASH的大小+0X08000000)
 //wifi句柄以及任务
 TaskHandle_t Wifi_Handler;
 void Wifi_task(void *pvParameters);
@@ -47,18 +48,19 @@ SemaphoreHandle_t  xSemaphore_4;
 SemaphoreHandle_t  xSemaphore_5;
  char Send_id[40];
  int send_volume=0;
-// Json Fan=
-//{
-//	.name="FAN1",
-//	.status=0,
-//	.value=0,
-//	.len=4
-//};
+ int mode=0;
+ int TH=2;
+  int test=0;
 int main(void)
 {  
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 	delay_init();	    				
     Usart1_Init();
+    usart3_init(9600);
+    STMFLASH_Write(FLASH_SAVE_ADDR,(u16*)&TH,1);
+    TH=3;
+    STMFLASH_Read(FLASH_SAVE_ADDR,(u16*)&test,1);
+    printf("%d",test);
     xMutex = xSemaphoreCreateMutex( );
 
     xTaskCreate((TaskFunction_t )Wifi_task,             
@@ -73,7 +75,8 @@ int main(void)
                (uint16_t       )512,        
                (void*          )NULL,                  
                (UBaseType_t    )3,        
-               (TaskHandle_t*  )&Key_Handler);             
+               (TaskHandle_t*  )&Key_Handler);    
+               
    xTaskCreate((TaskFunction_t )HC05_task,             
                (const char*    )"HC05_task",           
                (uint16_t       )1024,        
@@ -118,8 +121,21 @@ void Wifi_task(void *pvParameters)
        
         if(strstr((const char *)Uart4_Read_Buff, (const char *)"+MQTTSUBRECV:0") != NULL){
             printf("RX=%s\r\n",(char *)Uart4_Read_Buff);
-      
+           
             Usart2_Send(Uart4_Read_Buff,UART4_RX_SIZE);
+            if(strstr((const char *)Uart4_Read_Buff,(const char *)"Mode"))
+            {
+               Json_mode((char *)Uart4_Read_Buff,&mode);
+                printf("%d",mode);
+             
+            }
+            else if(strstr((const char *)Uart4_Read_Buff,(const char *)"TH"))
+            {
+               Json_mode((char *)Uart4_Read_Buff,&TH);
+               printf("%d",TH);
+                          
+             
+            }
            // MQTT_JSON((char *)Uart4_Read_Buff,&Fan);
             
           
@@ -143,7 +159,7 @@ void Lora_task(void *pvParameters)
    xSemaphore_2=xSemaphoreCreateCounting( 1, 0 );
    Usart2_Init();
    LoRa_Init();
-               
+  
   xTaskCreate((TaskFunction_t )Rfid_task,             
                (const char*    )"Rfid_task",           
                (uint16_t       )512,        
@@ -183,7 +199,7 @@ void Lora_task(void *pvParameters)
 void Rfid_task(void *pvParameters)
 {
    
-    usart3_init(9600);
+
     char Id_num[20];
 
     xSemaphore_3 = xSemaphoreCreateCounting( 1, 0 );
@@ -208,9 +224,10 @@ void sendRfidCmd_task(void *pvParameters)
 
   while(1)
   {
-  
+    if(mode)
+    {
       RFID_CMD();
-   
+    }
    
   }
 
@@ -223,7 +240,7 @@ void Key_task(void *pvParameters)
     uint8_t flag_stop=0;
     uint8_t flag_key=0;
     int volume=0;
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE); // GPIOA时钟
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD|RCC_APB2Periph_GPIOG, ENABLE); // GPIOA时钟
     GPIO_InitTypeDef GPIO_InitStructure;
                         
     //row1--PD5
@@ -235,6 +252,9 @@ void Key_task(void *pvParameters)
     //PD6--led灯
      GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6; 
      GPIO_Init(GPIOD, &GPIO_InitStructure);    
+     //PG1--led灯
+     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1; 
+     GPIO_Init(GPIOG, &GPIO_InitStructure);   
     
     //上拉
     GPIO_InitStructure.GPIO_Mode =  GPIO_Mode_IPU;
@@ -249,12 +269,14 @@ void Key_task(void *pvParameters)
     //拉低	
     GPIO_ResetBits(GPIOD,GPIO_Pin_7);
     GPIO_ResetBits(GPIOD,GPIO_Pin_6);
-  
+    GPIO_ResetBits(GPIOG,GPIO_Pin_1);
+    
      printf("enter key!");
-      printf("enter key!\n");
+     printf("enter key!\n");
     while(1)
     {
-    
+      if(mode)
+      {
       if(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_3)==0)
       {
          
@@ -264,12 +286,25 @@ void Key_task(void *pvParameters)
               while(!GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_3));
               
              flag_stop++;
-              if(flag_key==1)
+              if(flag_key==0)
               {
+                   GPIO_SetBits(GPIOD,GPIO_Pin_6);
+                   flag_key=1;
+              }
+              else if(flag_key==1)
+              {    
+                  GPIO_ResetBits(GPIOD,GPIO_Pin_6);
+                  flag_key=0;
                   flag_stop=0;
               }
-             flag_key=1;
-             GPIO_SetBits(GPIOD,GPIO_Pin_6);
+              else if(flag_key==2) 
+              {
+                GPIO_ResetBits(GPIOG,GPIO_Pin_1);
+                GPIO_SetBits(GPIOD,GPIO_Pin_6);
+                  flag_key=1;
+              }
+             
+            
               
           }
       
@@ -282,12 +317,27 @@ void Key_task(void *pvParameters)
           {   
               while(!GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_4));             
               flag_stop++;
-              if(flag_key==2)
+              if(flag_key==0)
               {
+               GPIO_SetBits(GPIOG,GPIO_Pin_1);
+                flag_key=2;
+              
+              }
+              else if(flag_key==2)
+              {  
+                  flag_key=0;
+                  GPIO_ResetBits(GPIOG,GPIO_Pin_1);
                   flag_stop=0;
               }
-              flag_key=2;
-             GPIO_ResetBits(GPIOD,GPIO_Pin_6);
+              else if(flag_key==1)
+              {
+               GPIO_ResetBits(GPIOD,GPIO_Pin_6);   
+               GPIO_SetBits(GPIOG,GPIO_Pin_1);
+                  flag_key=2;
+                
+              }
+           
+             
               
           }
       
@@ -321,7 +371,7 @@ void Key_task(void *pvParameters)
     
     
     }
-    
+}
     
 }
 extern ReceiveData UART5_ReceiveData;

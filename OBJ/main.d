@@ -57,3 +57,4 @@
 ..\obj\main.o: my_json.h
 ..\obj\main.o: ..\FreeRTOS\include\timers.h
 ..\obj\main.o: ..\Peripheral\HC05\blue.h
+..\obj\main.o: ..\Peripheral\STMFLASH\stmflash.h

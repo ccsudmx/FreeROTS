@@ -32,5 +32,19 @@ void MQTT_JSON(char *a,Json * Fan)
  
 }
 
+void Json_mode(char * a,int *c)
+{
+
+ char *b=a;
+ while(*b!=',')b++;
+ while(*b!=':')	
+ {  
+     b++;
+ }
+ b++;
+ b++;
+ *c=(*b)-48;
+
+}
 
 

@@ -10,7 +10,7 @@ extern unsigned char Uart3RxDataConut ;
 extern unsigned char Rx3Flag;
 unsigned char ReadId(char  * Id_num);
 unsigned char Write_RFID(unsigned char addr,unsigned char * data,unsigned char len);
-unsigned char Read_RFID(unsigned char addr,unsigned char len);
+unsigned char Read_RFID(unsigned char addr,unsigned char len,unsigned char *result);
 void RFID_task(void);
 void RFID_CMD(void);
 #endif
