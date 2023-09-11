@@ -16,6 +16,7 @@ void Send_AtCmd(uint8_t *string,uint8_t len)
 {   
     uint8_t Send[AT_RX_LEN] ;   
     sprintf((char *)Send,"%s\r\n",string);  
+   // printf("卡在这里3~");
     Uart4_Send(Send,len+2);
  
 }
@@ -23,13 +24,17 @@ extern xSemaphoreHandle xSemaphore_4;
 extern xSemaphoreHandle xSemaphore_5;
 
 uint8_t ESP8266_SetStation(void)
-{
+{  
+  //   printf("卡在这里2~");  
    memset(Uart4_Rx_Buff,0,AT_RX_LEN);
   Send_AtCmd((uint8_t*)AT_CWMODE,strlen(AT_CWMODE));
+  //printf("卡在这里4~"); 
     xSemaphoreTake(xSemaphore_4, portMAX_DELAY);
+    // printf("卡在这里5~"); 
   delay_ms(10);
+    // printf("卡在这里6~"); 
   Fifo_Get(&Uart4_Rx_Fifo,Uart4_Rx_Buff,AT_RX_LEN);
-    printf("Debug-SetStation:%s",Uart4_Rx_Buff);
+  //  printf("Debug-SetStation:%s",Uart4_Rx_Buff);
     
   if(strstr((const char *)Uart4_Rx_Buff,(const char *)"OK")==NULL)
   	{    
@@ -155,15 +160,17 @@ int8_t ESP8266_MQTT_Pub(char *IpBuf, uint8_t len, uint8_t qos)
 		return -2;
 	}
      printf("MQTT_Pub: %s\r\n", IpBuf);
+    MQTTSendErrorTimes=0;
 	return 0;
 }
-void Connect_MQTT(void)
+uint8_t Connect_MQTT(void)
 {
   int error=0;
   int i=0;
-    
+     // printf("卡在这里~");  
     for(i=0;i<3;i++)
-    {
+    { 
+        // printf("卡在这里1~");  
      if(ESP8266_SetStation()==0)break;
     
     }
@@ -208,6 +215,7 @@ void Connect_MQTT(void)
     
     
     }
+    return error;
     
     
 

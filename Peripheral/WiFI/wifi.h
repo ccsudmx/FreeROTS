@@ -8,7 +8,7 @@
 #define MQTT_PWD   "88888888"
 #define MQTT_IP    "172.16.40.36"
 #define MQTT_PORT   1883
-void Connect_MQTT(void) ; 
+uint8_t Connect_MQTT(void) ; 
 int8_t ESP8266_MQTT_Pub(char *IpBuf, uint8_t len, uint8_t qos);
 #endif
 

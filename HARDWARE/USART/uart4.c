@@ -94,7 +94,7 @@ void Uart4_Send(const uint8_t* buf, uint16_t len)
 	{
 		return;
 	}
-   
+   //printf("send=%s",buf);
  
 	DMA_Cmd(DMA2_Channel5, DISABLE);
 

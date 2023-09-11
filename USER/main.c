@@ -46,6 +46,7 @@ SemaphoreHandle_t xSemaphore_2;
 SemaphoreHandle_t xSemaphore_3;
 SemaphoreHandle_t  xSemaphore_4;
 SemaphoreHandle_t  xSemaphore_5;
+extern uint8_t MQTTSendErrorTimes;
  char Send_id[40];
  int send_volume=0;
  int mode=0;
@@ -65,7 +66,7 @@ int main(void)
 
     xTaskCreate((TaskFunction_t )Wifi_task,             
                (const char*    )"Wifi_task",           
-               (uint16_t       )2056,        
+               (uint16_t       )1280,        
                (void*          )NULL,                  
                (UBaseType_t    )4,        
                (TaskHandle_t*  )&Wifi_Handler); 
@@ -112,7 +113,7 @@ void Wifi_task(void *pvParameters)
      
     while(1)
     {  
-       
+   
        xSemaphoreTake(xSemaphore_4, portMAX_DELAY);
         
        memset(Uart4_Read_Buff,0,UART4_RX_SIZE);
@@ -169,7 +170,7 @@ void Lora_task(void *pvParameters)
                
   xTaskCreate((TaskFunction_t )sendRfidCmd_task,             
                (const char*    )"sendRfidCmd_task",           
-               (uint16_t       )256,        
+               (uint16_t       )1024,        
                (void*          )NULL,                  
                (UBaseType_t    )3,        
                (TaskHandle_t*  )&sendRfidCmd_Handler);
@@ -182,13 +183,15 @@ void Lora_task(void *pvParameters)
           delay_ms(100);
          Fifo_Get(&Usart2_Rx_Fifo,Usart2_RX,USART2_RX_SIZE);
            //    Usart2_RX[strlen((char *)Usart2_RX)-1]=0;
+          
+         if(MQTTSendErrorTimes<5)
+         {
+             sprintf((char *)Send_msg,"%s,%s,\"water\":\"%d\"}",(char *)Usart2_RX,Send_id,send_volume);
 
-
-        sprintf((char *)Send_msg,"%s,%s,\"water\"=\"%d\"}",(char *)Usart2_RX,Send_id,send_volume);
-        //printf("%s",Send_id);
-        // xSemaphoreTake(xMutex, portMAX_DELAY);
-         ESP8266_MQTT_Pub((char *)Send_msg,strlen((char *)Send_msg),1);
-         // xSemaphoreGive(xMutex);
+       
+              ESP8266_MQTT_Pub((char *)Send_msg,strlen((char *)Send_msg),1);
+ 
+         }
          
         
     }
@@ -208,7 +211,7 @@ void Rfid_task(void *pvParameters)
         
       xSemaphoreTake(xSemaphore_3, portMAX_DELAY);
       ReadId(Id_num);
-      sprintf(Send_id,"ID=\"1\",card_number=\"%s\"",Id_num);
+        sprintf(Send_id,"\"ID\":\"1\",\"card_number\":\"%s\"",Id_num);
         printf("%s",Send_id);
       Usart2_Send((unsigned char *)Id_num,UART4_RX_SIZE);
     
@@ -223,7 +226,36 @@ void sendRfidCmd_task(void *pvParameters)
                
 
   while(1)
-  {
+  {     
+      
+     if(MQTTSendErrorTimes>=5)
+             {   
+             printf("eenter test");
+              printf("times=%d",MQTTSendErrorTimes);
+                 if(uxTaskPriorityGet(Wifi_Handler)!=(UBaseType_t )1)
+                 {
+                     vTaskPrioritySet(Wifi_Handler,(UBaseType_t )1);
+                  
+                 }
+
+               
+               if(Connect_MQTT()==0)
+               {
+              
+                
+                   vTaskPrioritySet(Wifi_Handler,(UBaseType_t )4);
+             ;
+                   MQTTSendErrorTimes=0;
+               
+               }
+       
+                   
+            else  vTaskDelay(2000);
+                // taskEXIT_CRITICAL(); 
+              
+             
+             } 
+                 
     if(mode)
     {
       RFID_CMD();
@@ -244,7 +276,7 @@ void Key_task(void *pvParameters)
     GPIO_InitTypeDef GPIO_InitStructure;
                         
     //row1--PD5
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;      
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;      
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;	//推挽输出
     GPIO_Init(GPIOD, &GPIO_InitStructure);  
@@ -267,7 +299,7 @@ void Key_task(void *pvParameters)
     
  
     //拉低	
-    GPIO_ResetBits(GPIOD,GPIO_Pin_7);
+    GPIO_ResetBits(GPIOD,GPIO_Pin_5);
     GPIO_ResetBits(GPIOD,GPIO_Pin_6);
     GPIO_ResetBits(GPIOG,GPIO_Pin_1);
     
@@ -275,8 +307,8 @@ void Key_task(void *pvParameters)
      printf("enter key!\n");
     while(1)
     {
-      if(mode)
-      {
+//      if(mode)
+//      {
       if(GPIO_ReadInputDataBit(GPIOD,GPIO_Pin_3)==0)
       {
          
@@ -371,7 +403,7 @@ void Key_task(void *pvParameters)
     
     
     }
-}
+//}
     
 }
 extern ReceiveData UART5_ReceiveData;
